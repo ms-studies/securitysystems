@@ -1,9 +1,11 @@
 package com.mszalek.securitysystems;
 
 import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.mszalek.securitysystems.models.FieldResult;
 import com.mszalek.securitysystems.models.StepA;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -11,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
 @Service
 public class GeneralValidator {
@@ -46,8 +47,10 @@ public class GeneralValidator {
     public FieldResult validateEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             return new FieldResult("ERROR", "Email cannot be empty");
-        } else {
+        } else if (EmailValidator.getInstance().isValid(email)) {
             return new FieldResult("OK", null);
+        } else {
+            return new FieldResult("ERROR", "The email you have provided is invalid.");
         }
     }
 
@@ -76,7 +79,11 @@ public class GeneralValidator {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 Date date = format.parse(birthDate);
-                return new FieldResult("OK", null);
+                if (date.before(new Date())) {
+                    return new FieldResult("OK", null);
+                } else {
+                    return new FieldResult("ERROR", "Date of birth cannot be in the future");
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
                 return new FieldResult("ERROR", "Invalid date format");
