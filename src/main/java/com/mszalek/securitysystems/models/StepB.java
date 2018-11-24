@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class StepB {
     String pesel;
-    String id;
+    String idNumber;
 }

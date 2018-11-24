@@ -31,7 +31,7 @@ public class GeneralValidator {
     public Map<String, FieldResult> validateStepB(StepB stepB) {
         Map<String, FieldResult> map = new HashMap<>();
         map.put("pesel", validatePesel(stepB.getPesel()));
-        map.put("id", validateId(stepB.getId()));
+        map.put("idNumber", validateId(stepB.getIdNumber()));
         return map;
     }
 
