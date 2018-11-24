@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.mszalek.securitysystems.models.FieldResult;
+import com.mszalek.securitysystems.models.FormModel;
 import com.mszalek.securitysystems.models.StepA;
 import com.mszalek.securitysystems.models.StepB;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +36,50 @@ public class GeneralValidator {
         map.put("pesel", validatePesel(stepB.getPesel()));
         map.put("idNumber", validateId(stepB.getIdNumber()));
         return map;
+    }
+
+    public Map<String, FieldResult> validateForm(FormModel formModel) {
+        Map<String, FieldResult> map = new HashMap<>();
+        map.put("firstName", validateFirstName(formModel.getFirstName()));
+        map.put("lastName", validateLastName(formModel.getLastName()));
+        map.put("email", validateEmail(formModel.getEmail()));
+        map.put("birthDate", validateBirthDateWithPesel(formModel.getBirthDate(), formModel.getPesel()));
+        map.put("phoneNumber", validatePhoneNumber(formModel.getPhoneNumber()));
+        map.put("pesel", validatePesel(formModel.getPesel()));
+        map.put("idNumber", validateId(formModel.getIdNumber()));
+        return map;
+    }
+
+    public FieldResult validateBirthDateWithPesel(String birthDate, String pesel) {
+        FieldResult result = validateBirthDate(birthDate);
+        if (result.getStatus().equals("ERROR") || validatePesel(pesel).getStatus().equals("ERROR")) {
+            return result;
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date = format.parse(birthDate);
+            LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            int expectedYear = localDate.getYear() % 100;
+            int expectedMonth = localDate.getMonthValue();
+            if (localDate.getYear() < 1900) {
+                expectedMonth += 80;
+            } else if (localDate.getYear() > 2000) {
+                expectedMonth += 20;
+            }
+            int expectedDay = localDate.getDayOfMonth();
+            boolean doesYearMatch = pesel.substring(0, 2).equals(String.format("%02d", expectedYear));
+            boolean doesMonthMatch = pesel.substring(2, 4).equals(String.format("%02d", expectedMonth));
+            boolean doesDayMatch = pesel.substring(4, 6).equals(String.format("%02d", expectedDay));
+            if (doesDayMatch && doesMonthMatch && doesYearMatch) {
+                return new FieldResult("OK", null);
+            } else {
+                return new FieldResult("ERROR", "Twoja data urodzenia nie zgadza się z numerem pesel");
+            }
+        } catch (ParseException e) {
+            //THIS will never happen
+            return result;
+        }
     }
 
     public FieldResult validatePesel(String pesel) {
