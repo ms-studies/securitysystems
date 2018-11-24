@@ -25,6 +25,9 @@ public class MainController {
     @Autowired
     FormsRepository repository;
 
+    @Autowired
+    FormService formService;
+
     @PostMapping(path = "/validate/stepA")
     public ResponseEntity validateStepA(@RequestBody StepA stepA) {
         Map<String, FieldResult> validationResult = validator.validateStepA(stepA);
@@ -54,13 +57,10 @@ public class MainController {
         Map<String, FieldResult> validationResult = validator.validateForm(formModel);
         HttpStatus status = validationResultToStatus(validationResult);
         if (status == HttpStatus.ACCEPTED) {
-            formModel.setId(null);
-            formModel.setCreateTimestamp(System.currentTimeMillis());
-            FormModel resultModel = repository.save(formModel);
+            FormModel resultModel = formService.saveForm(formModel);
             return new ResponseEntity<>(resultModel, HttpStatus.CREATED);
         }
         return new ResponseEntity<>(validationResult, status);
-
     }
 
     private StepA findSuggestion(StepB stepB) {
