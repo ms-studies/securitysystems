@@ -12,8 +12,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class GeneralValidator {
@@ -35,16 +33,17 @@ public class GeneralValidator {
         return stepBResult;
     }
 
-    public Map<String, FieldResult> validateForm(FormModel formModel) {
-        Map<String, FieldResult> map = new HashMap<>();
-        map.put("firstName", validateFirstName(formModel.getFirstName()));
-        map.put("lastName", validateLastName(formModel.getLastName()));
-        map.put("email", validateEmail(formModel.getEmail()));
-        map.put("birthDate", validateBirthDateWithPesel(formModel.getBirthDate(), formModel.getPesel()));
-        map.put("phoneNumber", validatePhoneNumber(formModel.getPhoneNumber()));
-        map.put("pesel", validatePesel(formModel.getPesel()));
-        map.put("idNumber", validateId(formModel.getIdNumber()));
-        return map;
+    public FormModelResult validateForm(FormModel formModel) {
+        FormModelResult result = new FormModelResult();
+        result.setFirstName(validateFirstName(formModel.getFirstName()));
+        result.setLastName(validateLastName(formModel.getLastName()));
+        result.setEmail(validateEmail(formModel.getEmail()));
+        result.setBirthDate(validateBirthDateWithPesel(formModel.getBirthDate(), formModel.getPesel()));
+        result.setPhoneNumber(validatePhoneNumber(formModel.getPhoneNumber()));
+        result.setPesel(validatePesel(formModel.getPesel()));
+        result.setIdNumber(validateId(formModel.getIdNumber()));
+        result.setApplication(validateApplication(formModel.getApplication()));
+        return result;
     }
 
     public FieldResult validateBirthDateWithPesel(String birthDate, String pesel) {
@@ -124,6 +123,13 @@ public class GeneralValidator {
         return sum % 10 == Integer.parseInt("" + pesel.charAt(10));
     }
 
+    public FieldResult validateApplication(String application) {
+        if (application == null || application.trim().isEmpty()) {
+            return new FieldResult("ERROR", "Treść aplikacji nie może być pusta. Prosimy wypełnić to pole.");
+        } else {
+            return new FieldResult("OK", null);
+        }
+    }
 
     public FieldResult validateFirstName(String firstName) {
         if (firstName == null || firstName.trim().isEmpty()) {

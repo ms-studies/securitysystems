@@ -2,6 +2,7 @@
 * [REST endpoints](#rest-endpoints)  
   * [Step A Validation](#step-a-validation)
   * [Step B Validation](#step-b-validation)
+  * [Form submit](#form-submit)
 
 ## REST endpoints
 ### Step A Validation
@@ -152,4 +153,81 @@ Body:
     "ok": true
 }
 ```
+### Form submit
+Type: POST  
+Path: /submit
+##### **Parameter:** (required)  
+Name: formModel  
+Type: body parameter  
+Example value:
+```json
+{
+    "firstName": "Marcin",
+    "lastName": "Szałek",
+    "phoneNumber": "+48505505505",
+    "pesel": "90080517455",
+    "idNumber": "SAK299208",
+    "birthDate": "1990-08-05",
+    "email": "my@email.com",
+    "application": "Some text"
+}
+```
+##### **Response:**  
+Example response with invalid fields:  
+Status: 400 (BAD REQUEST)  
+Body:
+```json
+{
+    "firstName": {
+        "status": "OK",
+        "msg": null
+    },
+    "lastName": {
+        "status": "OK",
+        "msg": null
+    },
+    "email": {
+        "status": "OK",
+        "msg": null
+    },
+    "phoneNumber": {
+        "status": "OK",
+        "msg": null
+    },
+    "birthDate": {
+        "status": "ERROR",
+        "msg": "Twoja data urodzenia nie zgadza się z numerem pesel"
+    },
+    "pesel": {
+        "status": "OK",
+        "msg": null
+    },
+    "idNumber": {
+        "status": "ERROR",
+        "msg": "Numer dowodu musi sie składać z dokładnie 3 liter i 6 cyfr, przykładowo: ABC123456"
+    },
+    "application": {
+        "status": "OK",
+        "msg": null
+    },
+    "ok": false
+}
+```
 
+Example response with valid fields:  
+Status: 201 (CREATED)  
+Body:
+```json
+{
+    "id": 1,
+    "firstName": "Marcin",
+    "lastName": "Szałek",
+    "phoneNumber": "+48505505505",
+    "email": "my@email.com",
+    "birthDate": "1990-08-05",
+    "idNumber": "SAK299208",
+    "pesel": "90080517455",
+    "application": "Some XSS text",
+    "createTimestamp": 1543137294050
+}
+```

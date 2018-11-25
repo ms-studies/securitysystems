@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class MainController {
@@ -43,13 +42,12 @@ public class MainController {
 
     @PostMapping(path = "/submit")
     public ResponseEntity submitForm(@RequestBody FormModel formModel) {
-        Map<String, FieldResult> validationResult = validator.validateForm(formModel);
-        HttpStatus status = validationResultToStatus(validationResult);
-        if (status == HttpStatus.ACCEPTED) {
+        FormModelResult result = validator.validateForm(formModel);
+        if (result.isOk()) {
             FormModel resultModel = formService.saveForm(formModel);
             return new ResponseEntity<>(resultModel, HttpStatus.CREATED);
         }
-        return new ResponseEntity<>(validationResult, status);
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
     private StepA findSuggestion(StepB stepB) {
@@ -66,12 +64,5 @@ public class MainController {
         stepA.setLastName(formModel.getLastName());
         stepA.setPhoneNumber(formModel.getPhoneNumber());
         return stepA;
-    }
-
-    private HttpStatus validationResultToStatus(Map<String, FieldResult> validationResult) {
-        return validationResult.values().stream()
-                .anyMatch((res) -> res.getStatus().equals("ERROR"))
-                ? HttpStatus.BAD_REQUEST
-                : HttpStatus.ACCEPTED;
     }
 }
