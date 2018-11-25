@@ -151,7 +151,11 @@ public class GeneralValidator {
         if (email == null || email.trim().isEmpty()) {
             return new FieldResult("ERROR", "Email nie może być pusty. Prosimy wypełnić to pole.");
         } else if (EmailValidator.getInstance().isValid(email)) {
-            return new FieldResult("OK", null);
+            if (email.matches(".+@.+\\..+")) {
+                return new FieldResult("OK", null);
+            } else {
+                return new FieldResult("ERROR", "Podany adres email jest nieprawidłowy. Przykładowy adres: jannowak@gmail.com");
+            }
         } else {
             return new FieldResult("ERROR", "Podany adres email jest nieprawidłowy. Przykładowy adres: jankowalski@gmail.com");
         }
