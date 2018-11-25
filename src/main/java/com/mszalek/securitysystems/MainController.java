@@ -1,9 +1,6 @@
 package com.mszalek.securitysystems;
 
-import com.mszalek.securitysystems.models.FieldResult;
-import com.mszalek.securitysystems.models.FormModel;
-import com.mszalek.securitysystems.models.StepA;
-import com.mszalek.securitysystems.models.StepB;
+import com.mszalek.securitysystems.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,27 +25,20 @@ public class MainController {
     FormService formService;
 
     @PostMapping(path = "/validate/stepA")
-    public ResponseEntity validateStepA(@RequestBody StepA stepA) {
-        Map<String, FieldResult> validationResult = validator.validateStepA(stepA);
-        return new ResponseEntity<>(validationResult, validationResultToStatus(validationResult));
+    public ResponseEntity<StepAResult> validateStepA(@RequestBody StepA stepA) {
+        StepAResult result = validator.validateStepA(stepA);
+        return new ResponseEntity<>(result, result.isOk() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST);
 
     }
 
     @PostMapping(path = "/validate/stepB")
-    public ResponseEntity validateStepB(@RequestBody StepB stepB) {
-        Map<String, FieldResult> validationResult = validator.validateStepB(stepB);
-        HttpStatus status = validationResultToStatus(validationResult);
-        if (status == HttpStatus.ACCEPTED) {
+    public ResponseEntity<StepBResult> validateStepB(@RequestBody StepB stepB) {
+        StepBResult result = validator.validateStepB(stepB);
+        if (result.isOk()) {
             StepA suggestion = findSuggestion(stepB);
-            if (suggestion != null) {
-                Map<String, Object> newResult = new HashMap<>();
-                newResult.put("pesel", validationResult.get("pesel"));
-                newResult.put("idNumber", validationResult.get("idNumber"));
-                newResult.put("suggestion", suggestion);
-                return new ResponseEntity<>(newResult, status);
-            }
+            result.setSuggestion(suggestion);
         }
-        return new ResponseEntity<>(validationResult, status);
+        return new ResponseEntity<>(result, result.isOk() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(path = "/submit")

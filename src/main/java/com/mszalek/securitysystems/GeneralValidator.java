@@ -3,10 +3,7 @@ package com.mszalek.securitysystems;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import com.mszalek.securitysystems.models.FieldResult;
-import com.mszalek.securitysystems.models.FormModel;
-import com.mszalek.securitysystems.models.StepA;
-import com.mszalek.securitysystems.models.StepB;
+import com.mszalek.securitysystems.models.*;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +18,21 @@ import java.util.Map;
 @Service
 public class GeneralValidator {
 
-    public Map<String, FieldResult> validateStepA(StepA stepA) {
-        Map<String, FieldResult> map = new HashMap<>();
-        map.put("firstName", validateFirstName(stepA.getFirstName()));
-        map.put("lastName", validateLastName(stepA.getLastName()));
-        map.put("email", validateEmail(stepA.getEmail()));
-        map.put("birthDate", validateBirthDate(stepA.getBirthDate()));
-        map.put("phoneNumber", validatePhoneNumber(stepA.getPhoneNumber()));
-        return map;
+    public StepAResult validateStepA(StepA stepA) {
+        StepAResult stepAResult = new StepAResult();
+        stepAResult.setFirstName(validateFirstName(stepA.getFirstName()));
+        stepAResult.setLastName(validateLastName(stepA.getLastName()));
+        stepAResult.setEmail(validateEmail(stepA.getEmail()));
+        stepAResult.setBirthDate(validateBirthDate(stepA.getBirthDate()));
+        stepAResult.setPhoneNumber(validatePhoneNumber(stepA.getPhoneNumber()));
+        return stepAResult;
     }
 
-    public Map<String, FieldResult> validateStepB(StepB stepB) {
-        Map<String, FieldResult> map = new HashMap<>();
-        map.put("pesel", validatePesel(stepB.getPesel()));
-        map.put("idNumber", validateId(stepB.getIdNumber()));
-        return map;
+    public StepBResult validateStepB(StepB stepB) {
+        StepBResult stepBResult = new StepBResult();
+        stepBResult.setPesel(validatePesel(stepB.getPesel()));
+        stepBResult.setIdNumber(validateId(stepB.getIdNumber()));
+        return stepBResult;
     }
 
     public Map<String, FieldResult> validateForm(FormModel formModel) {

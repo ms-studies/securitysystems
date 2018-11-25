@@ -17,8 +17,7 @@ public class EscapeUtils {
     }
 
     public static String escape(String str) {
-        StringWriter writer = new StringWriter((int)
-                (str.length() * 1.5));
+        StringWriter writer = new StringWriter();
         int len = str.length();
         for (int i = 0; i < len; i++) {
             char c = str.charAt(i);
