@@ -4,9 +4,11 @@ import com.mszalek.securitysystems.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 public class MainController {
@@ -21,7 +23,6 @@ public class MainController {
     public ResponseEntity<StepAResult> validateStepA(@RequestBody StepA stepA) {
         StepAResult result = validator.validateStepA(stepA);
         return new ResponseEntity<>(result, result.isOk() ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST);
-
     }
 
     @PostMapping(path = "/validate/stepB")
@@ -48,6 +49,23 @@ public class MainController {
             }
         }
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(path = "/forms")
+    public ResponseEntity<List<SimpleFormModel>> getForms(@RequestParam("pesel") String pesel, @RequestParam("idNumber") String idNumber) {
+        return new ResponseEntity<>(formService.getFormModels(pesel, idNumber), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/formDetails")
+    public ResponseEntity getFormDetails(@RequestParam("formId") String formId,
+                                         @RequestParam("password") String password) {
+        try {
+            return new ResponseEntity<>(formService.getFormDetails(formId, password), HttpStatus.OK);
+        } catch (Exception e) {
+            Map<String, String> res = new HashMap<>();
+            res.put("message", e.getMessage());
+            return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.mszalek.securitysystems;
 
 import com.google.common.hash.Hashing;
 import com.mszalek.securitysystems.models.FormModel;
+import com.mszalek.securitysystems.models.SimpleFormModel;
 import com.mszalek.securitysystems.models.StepA;
 import com.mszalek.securitysystems.models.StepB;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FormService {
@@ -18,6 +21,10 @@ public class FormService {
     @Autowired
     FormsRepository repository;
 
+    private String hashPassword(String password) {
+        return Hashing.sha512().hashString(password, StandardCharsets.UTF_8).toString();
+    }
+
     public FormModel saveForm(FormModel formModel) throws FormSubmitException {
         formModel.setId(null);
         formModel.setCreateTimestamp(System.currentTimeMillis());
@@ -25,13 +32,30 @@ public class FormService {
         formModel.setFirstName(EscapeUtils.escape(formModel.getFirstName()));
         formModel.setLastName(EscapeUtils.escape(formModel.getLastName()));
         formModel.setApplication(EscapeUtils.escape(formModel.getApplication()));
-        formModel.setPassword(Hashing.sha512().hashString(formModel.getPassword(), StandardCharsets.UTF_8).toString());
+        formModel.setPassword(hashPassword(formModel.getPassword()));
 
         checkIfCanSubmitForm(formModel);
 
         FormModel resultModel = repository.save(formModel);
         resultModel.setPassword(null);
         return resultModel;
+    }
+
+    public List<SimpleFormModel> getFormModels(String pesel, String idNumber) {
+        return repository.findAllByPeselAndIdNumber(pesel, idNumber).stream().map(SimpleFormModel::new).collect(Collectors.toList());
+    }
+
+    public FormModel getFormDetails(String id, String password) throws Exception {
+        Optional<FormModel> model = repository.findById(Long.parseLong(id));
+        if (!model.isPresent()) {
+            throw new Exception("No matching form.");
+        }
+        FormModel formModel = model.get();
+        if (!formModel.getPassword().equals(hashPassword(password))) {
+            throw new Exception("Invalid password");
+        }
+        formModel.setPassword(null);
+        return formModel;
     }
 
     private void checkIfCanSubmitForm(FormModel formModel) throws FormSubmitException {

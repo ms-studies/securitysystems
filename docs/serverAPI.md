@@ -3,6 +3,8 @@
   * [Step A Validation](#step-a-validation)
   * [Step B Validation](#step-b-validation)
   * [Form submit](#form-submit)
+  * [List of forms]("list-of-forms)
+  * [Form details]("form-details)
 * [Field validations](#field-validations)
 * [Duplicate prevention](#duplicate-prevention)
 * [SQL Injection prevention](#sql-injection-prevention)
@@ -288,6 +290,85 @@ Body:
     "ok": false
 }
 ```
+
+### List of forms
+Type: GET  
+Path: /forms
+##### **Parameters:** (required)  
+* Name: pesel  
+Type: query parameter (string)
+
+* Name: idNumber  
+Type: query parameter (string)
+
+Example request:
+`GET localhost:8080/forms?pesel=90080517455&idNumber=SAK299208`
+
+##### **Response:**  
+Example response:  
+Status: 200 (OK)  
+Body:
+```json
+[
+    {
+        "id": 1,
+        "createTimeStamp": 1543159371313
+    }
+]
+```
+If there is no matching forms, the empty list is returned
+
+
+### Form details
+Type: GET  
+Path: /formDetails
+##### **Parameters:** (required)  
+* Name: formId  
+Type: query parameter (string)
+
+* Name: password  
+Type: query parameter (string)
+
+Example request:
+`GET localhost:8080/formDetails?formId=1&password=Some password123-1`
+
+##### **Response:**  
+Example response:  
+Status: 200 (OK)  
+Body:
+```json
+{
+    "id": 1,
+    "firstName": "Marcin",
+    "lastName": "Szałek",
+    "phoneNumber": "+48505505505",
+    "email": "my@email.com",
+    "birthDate": "1990-08-05",
+    "idNumber": "SAK299208",
+    "pesel": "90080517455",
+    "application": "&lt;xss&gt;Some application",
+    "password": null,
+    "createTimestamp": 1543159371313
+}
+```
+
+Example response if there is no matching form id:
+Status: 400 (BAD REQUEST)
+```json
+{
+    "message": "No matching form."
+}
+```
+
+
+Example response if there is no matching form id:
+Status: 400 (BAD REQUEST)
+```json
+{
+    "message": "Invalid password"
+}
+```
+
 
 ## Field validations
 In validate steps requests as well as when submitting the form, every field is validated separately with following methods:
