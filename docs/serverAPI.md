@@ -341,6 +341,20 @@ In validate steps requests as well as when submitting the form, every field is v
 * A combination of PESEL number, ID number and Application must be unique. It means a person cannot submit the same aplication twice.
   
 ## SQL injection prevention
-Backend application uses JPARepository interface from Spring Boot JPA. T...
+Backend application uses [JPARepository](https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/JpaRepository.html) interface from Spring Boot JPA, which uses [EntityManager](https://docs.oracle.com/javaee/7/api/javax/persistence/EntityManager.html) from JavaEE. EntityManager's methods (excluding native queries which are not used by us) are generating parametrized SQL queries which are SQLInjection-safe.
+>Unfortunately, we were not able to find official way of proving that, using EntityManager gives us 100% safety against SQL Injection...  
+>Our conclusion is based on two factors:
+>* EntityManager's safeness is considered "common knowledge" in source in the internet.
+>* On "Network Database Systems" course dr Smolinski and dr Karbowańczyk claimed that using entity manager makes the application 99% safe against SQL Injection (and it was tested during the course), so we wouldn't dare to contest that.
 ## XSS prevention
-//TODO
+According to [OWASP Cross Site Scripting prevention cheatsheet](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#XSS_Prevention_Rules_Summary), since we are displaying our data in HTML Body, we are using [HTML Entity Encoding](https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet#RULE_.231_-_HTML_Escape_Before_Inserting_Untrusted_Data_into_HTML_Element_Content).
+That means we are doing following mapping on backend side before storing form in database:
+```
+& --> &amp;
+< --> &lt;
+> --> &gt;
+" --> &quot;
+' --> &#x27;
+/ --> &#x2F;
+```
+The mapping is applied only to fields that are not validated against regex: first name, last name, application.
