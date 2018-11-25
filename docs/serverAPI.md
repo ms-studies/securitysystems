@@ -278,7 +278,10 @@ In validate steps requests as well as when submitting the form, every field is v
 * Application
   * Must exist
   * Must not be empty (trimmed)
-  
+* Password
+  * Must exist
+  * Must not be empty (trimmed)
+  * Must be considered Strong or Very Strong according to [Zxcbn4j](https://github.com/nulab/zxcvbn4j) library metrics
 ## Duplicate prevention
 //TODO
 ## SQL injection prevention

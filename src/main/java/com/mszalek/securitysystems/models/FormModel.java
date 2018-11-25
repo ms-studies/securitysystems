@@ -22,5 +22,6 @@ public class FormModel {
     private String idNumber;
     private String pesel;
     private String application;
+    private String password;
     private Long createTimestamp;
 }

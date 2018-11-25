@@ -12,6 +12,7 @@ public class FormModelResult {
     FieldResult pesel;
     FieldResult idNumber;
     FieldResult application;
+    FieldResult password;
 
     public boolean isOk() {
         if (firstName != null && !firstName.getStatus().equals("OK")) return false;
@@ -22,6 +23,7 @@ public class FormModelResult {
         if (pesel != null && !pesel.getStatus().equals("OK")) return false;
         if (idNumber != null && !idNumber.getStatus().equals("OK")) return false;
         if (application != null && !application.getStatus().equals("OK")) return false;
+        if (password != null && !password.getStatus().equals("OK")) return false;
         return true;
     }
 }

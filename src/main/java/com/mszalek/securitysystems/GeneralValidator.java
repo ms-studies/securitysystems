@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.mszalek.securitysystems.models.*;
+import com.nulabinc.zxcvbn.Zxcvbn;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +44,7 @@ public class GeneralValidator {
         result.setPesel(validatePesel(formModel.getPesel()));
         result.setIdNumber(validateId(formModel.getIdNumber()));
         result.setApplication(validateApplication(formModel.getApplication()));
+        result.setPassword(validatePassword(formModel.getPassword()));
         return result;
     }
 
@@ -126,6 +128,16 @@ public class GeneralValidator {
     public FieldResult validateApplication(String application) {
         if (application == null || application.trim().isEmpty()) {
             return new FieldResult("ERROR", "Treść aplikacji nie może być pusta. Prosimy wypełnić to pole.");
+        } else {
+            return new FieldResult("OK", null);
+        }
+    }
+
+    public FieldResult validatePassword(String password) {
+        if (password == null || password.trim().isEmpty()) {
+            return new FieldResult("ERROR", "Hasło nie może być puste. Prosimy wypełnić to pole.");
+        } else if (new Zxcvbn().measure(password).getScore() < 3) {
+            return new FieldResult("ERROR", "Password too simple.");
         } else {
             return new FieldResult("OK", null);
         }
