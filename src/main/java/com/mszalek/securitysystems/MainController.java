@@ -58,7 +58,7 @@ public class MainController {
         if (matchingForms.isEmpty()) {
             return null;
         }
-        FormModel formModel = matchingForms.get(0);
+        FormModel formModel = matchingForms.get(matchingForms.size() - 1);
         StepA stepA = new StepA();
         stepA.setBirthDate(formModel.getBirthDate());
         stepA.setEmail(formModel.getEmail());
