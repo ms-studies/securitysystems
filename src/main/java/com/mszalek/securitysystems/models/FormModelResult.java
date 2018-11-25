@@ -13,6 +13,7 @@ public class FormModelResult {
     FieldResult idNumber;
     FieldResult application;
     FieldResult password;
+    String duplicateError;
 
     public boolean isOk() {
         if (firstName != null && !firstName.getStatus().equals("OK")) return false;
@@ -24,6 +25,7 @@ public class FormModelResult {
         if (idNumber != null && !idNumber.getStatus().equals("OK")) return false;
         if (application != null && !application.getStatus().equals("OK")) return false;
         if (password != null && !password.getStatus().equals("OK")) return false;
+        if (duplicateError != null) return false;
         return true;
     }
 }

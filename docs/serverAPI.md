@@ -22,7 +22,7 @@ Example value:
     "firstName": "Jan",
     "lastName": "",
     "birthDate": "1990-12-10",
-    "email": "this@.s.omeemail.com"
+    "email": "thiss@email..com"
 }
 ```
 ##### **Response:**  
@@ -37,11 +37,11 @@ Body:
     },
     "lastName": {
         "status": "ERROR",
-        "msg": "Nazwisko nie może być puste. Prosimy wypełnić to pole."
+        "msg": "Last name is required."
     },
     "email": {
         "status": "ERROR",
-        "msg": "Podany adres email jest nieprawidłowy. Przykładowy adres: jankowalski@gmail.com"
+        "msg": "Email address is invalid. Example email: jankowalski@gmail.com"
     },
     "phoneNumber": {
         "status": "OK",
@@ -105,11 +105,11 @@ Body:
 {
     "pesel": {
         "status": "ERROR",
-        "msg": "Numer PESEL musi się składać z dokładnie 11 cyfr. Na przykład: 12345678901"
+        "msg": "PESEL number must consist of 11 digits only. For example: 12345678901"
     },
     "idNumber": {
         "status": "ERROR",
-        "msg": "Numer dowodu jest niepoprawny. Sprawdź jeszcze raz"
+        "msg": "ID number is invalid. Check again."
     },
     "suggestion": null,
     "ok": false
@@ -173,7 +173,8 @@ Example value:
     "idNumber": "SAK299208",
     "birthDate": "1990-08-05",
     "email": "my@email.com",
-    "application": "Some text"
+    "application": "  ",
+    "password": "Some password"
 }
 ```
 ##### **Response:**  
@@ -199,21 +200,26 @@ Body:
         "msg": null
     },
     "birthDate": {
-        "status": "ERROR",
-        "msg": "Twoja data urodzenia nie zgadza się z numerem pesel"
+        "status": "OK",
+        "msg": null
     },
     "pesel": {
         "status": "OK",
         "msg": null
     },
     "idNumber": {
-        "status": "ERROR",
-        "msg": "Numer dowodu musi sie składać z dokładnie 3 liter i 6 cyfr, przykładowo: ABC123456"
-    },
-    "application": {
         "status": "OK",
         "msg": null
     },
+    "application": {
+        "status": "ERROR",
+        "msg": "Application content is required."
+    },
+    "password": {
+        "status": "ERROR",
+        "msg": "Password is too simple."
+    },
+    "duplicateError": null,
     "ok": false
 }
 ```
@@ -231,8 +237,55 @@ Body:
     "birthDate": "1990-08-05",
     "idNumber": "SAK299208",
     "pesel": "90080517455",
-    "application": "Some XSS text",
-    "createTimestamp": 1543137294050
+    "application": "&lt;xss&gt;Some application",
+    "password": null,
+    "createTimestamp": 1543154560763
+}
+```
+
+Example response with valid fields but with duplicate message:  
+Status: 400 (BAD REQUEST)  
+Body:
+```json
+{
+    "firstName": {
+        "status": "OK",
+        "msg": null
+    },
+    "lastName": {
+        "status": "OK",
+        "msg": null
+    },
+    "email": {
+        "status": "OK",
+        "msg": null
+    },
+    "phoneNumber": {
+        "status": "OK",
+        "msg": null
+    },
+    "birthDate": {
+        "status": "OK",
+        "msg": null
+    },
+    "pesel": {
+        "status": "OK",
+        "msg": null
+    },
+    "idNumber": {
+        "status": "OK",
+        "msg": null
+    },
+    "application": {
+        "status": "OK",
+        "msg": null
+    },
+    "password": {
+        "status": "OK",
+        "msg": null
+    },
+    "duplicateError": "You have already submitted such application.",
+    "ok": false
 }
 ```
 
@@ -283,8 +336,11 @@ In validate steps requests as well as when submitting the form, every field is v
   * Must not be empty (trimmed)
   * Must be considered Strong or Very Strong according to [Zxcbn4j](https://github.com/nulab/zxcvbn4j) library metrics
 ## Duplicate prevention
-//TODO
+* User data suggestion - When user validates stepB, if he/she has already submitted form with same stepB, then the validation will return a suggestion with the last used user data.
+* After user has submitted the form, he/she can submit next form with the same pesel and id number after X (e.g. 5 minute) time frame.
+* A combination of PESEL number, ID number and Application must be unique. It means a person cannot submit the same aplication twice.
+  
 ## SQL injection prevention
-//TODO
+Backend application uses JPARepository interface from Spring Boot JPA. T...
 ## XSS prevention
 //TODO

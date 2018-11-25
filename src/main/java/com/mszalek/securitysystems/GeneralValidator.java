@@ -72,7 +72,7 @@ public class GeneralValidator {
             if (doesDayMatch && doesMonthMatch && doesYearMatch) {
                 return new FieldResult("OK", null);
             } else {
-                return new FieldResult("ERROR", "Twoja data urodzenia nie zgadza się z numerem pesel");
+                return new FieldResult("ERROR", "Your date of birth is not matching your PESEL number.");
             }
         } catch (ParseException e) {
             //THIS will never happen
@@ -82,11 +82,11 @@ public class GeneralValidator {
 
     public FieldResult validatePesel(String pesel) {
         if (pesel == null || pesel.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Numer PESEL nie może być pusty. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "PESEL number is required.");
         } else if (!pesel.matches("[0-9]{11}")) {
-            return new FieldResult("ERROR", "Numer PESEL musi się składać z dokładnie 11 cyfr. Na przykład: 12345678901");
+            return new FieldResult("ERROR", "PESEL number must consist of 11 digits only. For example: 12345678901");
         } else if (!isPeselCheckSumOk(pesel)) {
-            return new FieldResult("ERROR", "Numer PESEL jest niepoprawny. Sprawdź jeszcze raz.");
+            return new FieldResult("ERROR", "PESEL number is invalid. Check again.");
         } else {
             return new FieldResult("OK", null);
         }
@@ -94,11 +94,11 @@ public class GeneralValidator {
 
     public FieldResult validateId(String id) {
         if (id == null || id.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Numer dowodu osobistego nie może być pusty. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "ID number is required.");
         } else if (!id.matches("[A-Z]{3}[0-9]{6}")) {
-            return new FieldResult("ERROR", "Numer dowodu musi sie składać z dokładnie 3 liter i 6 cyfr, przykładowo: ABC123456");
+            return new FieldResult("ERROR", "ID number must consist of 3 letter followed by 6 digits only, for example: ABC123456");
         } else if (!isIdCheckSumOk(id)) {
-            return new FieldResult("ERROR", "Numer dowodu jest niepoprawny. Sprawdź jeszcze raz");
+            return new FieldResult("ERROR", "ID number is invalid. Check again.");
         } else {
             return new FieldResult("OK", null);
         }
@@ -127,7 +127,7 @@ public class GeneralValidator {
 
     public FieldResult validateApplication(String application) {
         if (application == null || application.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Treść aplikacji nie może być pusta. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "Application content is required.");
         } else {
             return new FieldResult("OK", null);
         }
@@ -135,9 +135,9 @@ public class GeneralValidator {
 
     public FieldResult validatePassword(String password) {
         if (password == null || password.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Hasło nie może być puste. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "Password is required.");
         } else if (new Zxcvbn().measure(password).getScore() < 3) {
-            return new FieldResult("ERROR", "Password too simple.");
+            return new FieldResult("ERROR", "Password is too simple.");
         } else {
             return new FieldResult("OK", null);
         }
@@ -145,7 +145,7 @@ public class GeneralValidator {
 
     public FieldResult validateFirstName(String firstName) {
         if (firstName == null || firstName.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Imię nie może być puste. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "First name is required.");
         } else {
             return new FieldResult("OK", null);
         }
@@ -153,7 +153,7 @@ public class GeneralValidator {
 
     public FieldResult validateLastName(String lastName) {
         if (lastName == null || lastName.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Nazwisko nie może być puste. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "Last name is required.");
         } else {
             return new FieldResult("OK", null);
         }
@@ -161,39 +161,39 @@ public class GeneralValidator {
 
     public FieldResult validateEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Email nie może być pusty. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "Email is required.");
         } else if (EmailValidator.getInstance().isValid(email)) {
             if (email.matches(".+@.+\\..+")) {
                 return new FieldResult("OK", null);
             } else {
-                return new FieldResult("ERROR", "Podany adres email jest nieprawidłowy. Przykładowy adres: jannowak@gmail.com");
+                return new FieldResult("ERROR", "Email address is invalid. Example email: jannowak@gmail.com");
             }
         } else {
-            return new FieldResult("ERROR", "Podany adres email jest nieprawidłowy. Przykładowy adres: jankowalski@gmail.com");
+            return new FieldResult("ERROR", "Email address is invalid. Example email: jankowalski@gmail.com");
         }
     }
 
     public FieldResult validatePhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Numer telefony nie może być pusty. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "Phone number is required.");
         } else {
             try {
                 Phonenumber.PhoneNumber phoneNumber1 = PhoneNumberUtil.getInstance().parse(phoneNumber, "PL");
                 if (PhoneNumberUtil.getInstance().isValidNumber(phoneNumber1)) {
                     return new FieldResult("OK", null);
                 } else {
-                    return new FieldResult("ERROR", "Podany numer telefonu jest niepoprawny. Przykładowy numer: +48 555666777");
+                    return new FieldResult("ERROR", "Phone number is invalid. Example number: +48 555666777");
                 }
             } catch (NumberParseException e) {
                 e.printStackTrace();
-                return new FieldResult("ERROR", "Podany numer telefonu jest niepoprawny. Przykładowy numer: +48 555666777");
+                return new FieldResult("ERROR", "Phone number is invalid. Example number: +48 555666777");
             }
         }
     }
 
     public FieldResult validateBirthDate(String birthDate) {
         if (birthDate == null || birthDate.trim().isEmpty()) {
-            return new FieldResult("ERROR", "Data urodzenia nie może być pusta. Prosimy wypełnić to pole.");
+            return new FieldResult("ERROR", "Date of birth is required.");
         } else {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -201,11 +201,11 @@ public class GeneralValidator {
                 if (date.before(new Date())) {
                     return new FieldResult("OK", null);
                 } else {
-                    return new FieldResult("ERROR", "Data urodzenia nie może być w przyszłości.");
+                    return new FieldResult("ERROR", "Date of birth cannot be in the future..");
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                return new FieldResult("ERROR", "Niepoprawny format daty urodzenia. Przykładowa data: 1990-10-23");
+                return new FieldResult("ERROR", "Invalid date format. Example date: 1990-10-23");
             }
 
         }
