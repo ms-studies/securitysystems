@@ -84,6 +84,8 @@ The mapping is applied only to fields that are not validated against regex: firs
 
 
 ## REST endpoints
+Disclaimer:
+> Since the changes during development process, StepB in back-end matches first step in front-end and StepA in back-end matches second step in front-end.
 ### Step A Validation
 Type: POST  
 Path: /validate/stepA
