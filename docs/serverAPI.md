@@ -383,7 +383,7 @@ In validate steps requests as well as when submitting the form, every field is v
   * Must not be empty (trimmed)
   * Must be formatted in pattern "yyyy-MM-dd" (checked by exception handling while parsing)
   * Must not be from future (checked comparing with date on the server)
-  * _On form submit:_ Must be matching date in the pesel number
+  * Must be matching date in the pesel number
 * Email
   * Must exist
   * Must not be empty (trimmed)
@@ -393,6 +393,7 @@ In validate steps requests as well as when submitting the form, every field is v
     * It performs regex checks on whole email
     * It performs regex checks on user part
     * It performs regex checks on domain part
+    * It checks domain against valid country and tld domains, so that `email@fake.fake` will not pass. List of domains available [here](https://commons.apache.org/proper/commons-validator/apidocs/src-html/org/apache/commons/validator/routines/DomainValidator.html) (line 285+)
   * Must pass `.+@.+\..+` regex check that ensures a gTLD, since EmailValidator is accepting dotless domains like `xx@yyy`, which were prohibited by [ICANN](https://www.icann.org/news/announcement-2013-08-30-en).
 * PhoneNumber
   * Must exist
