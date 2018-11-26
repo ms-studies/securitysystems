@@ -10,4 +10,5 @@ public class StepA {
     String phoneNumber;
     //YYYY-MM-DD
     String birthDate;
+    String pesel;
 }

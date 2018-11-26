@@ -22,7 +22,8 @@ public class GeneralValidator {
         stepAResult.setFirstName(validateFirstName(stepA.getFirstName()));
         stepAResult.setLastName(validateLastName(stepA.getLastName()));
         stepAResult.setEmail(validateEmail(stepA.getEmail()));
-        stepAResult.setBirthDate(validateBirthDate(stepA.getBirthDate()));
+        stepAResult.setPesel(validatePesel(stepA.getPesel()));
+        stepAResult.setBirthDate(validateBirthDateWithPesel(stepA.getBirthDate(), stepA.getPesel()));
         stepAResult.setPhoneNumber(validatePhoneNumber(stepA.getPhoneNumber()));
         return stepAResult;
     }
