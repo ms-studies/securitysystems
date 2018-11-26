@@ -7,8 +7,8 @@
   * [Step A Validation](#step-a-validation)
   * [Step B Validation](#step-b-validation)
   * [Form submit](#form-submit)
-  * [List of forms]("list-of-forms)
-  * [Form details]("form-details)
+  * [List of forms](#list-of-forms)
+  * [Form details](#form-details)
 
 
 ## Field validations
