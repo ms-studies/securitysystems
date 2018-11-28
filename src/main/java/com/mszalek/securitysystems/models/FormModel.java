@@ -3,9 +3,7 @@ package com.mszalek.securitysystems.models;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -21,6 +19,8 @@ public class FormModel {
     private String birthDate;
     private String idNumber;
     private String pesel;
+    @Lob
+    @Column(length = 100000)
     private String application;
     private String password;
     private Long createTimestamp;
